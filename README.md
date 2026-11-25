@@ -54,7 +54,7 @@ flowchart LR
     S2 --> G2
     S1 --> G3
     S2 --> G3
----
+```
 
 ## Desarrollo Técnico de Ingenieria de Datos
 
