@@ -7,7 +7,7 @@ Pipeline **End-to-End en Databricks (Arquitectura Medallion)** diseñado para re
 ## Problema de Negocio
 
 Ante el crecimiento acelerado del crédito de consumo y microcrédito en Guayaquil, las áreas de Riesgos Crediticio enfrentan tres retos:
-1. **Integridad contable en ingesta multicanal:** Los pagos provenientes de App Móvil, Banca Web, Agencias, ATMs y Corresponsales de Barrio pueden llegar duplicados, con montos inválidos o con cambios tardíos de estado (`PENDIENTE` -> `CONFIRMADO`).
+1. **Integridad contable en ingesta multicanal:** Los pagos provenientes de App Móvil, Banca Web, Agencias, ATMs y Corresponsales de Barrio pueden llegar duplicados, con montos inválidos o con cambios tardíos de estado.
 2. **Visibilidad oportuna del riesgo geográfico:** Necesidad de monitorear la tasa de morosidad mayor a 30 días por sector de Guayaquil y alertar transacciones anómalas (por ejemplo, pagos inusuales de madrugada en corresponsales).
 3. **Cumplimiento regulatorio y privacidad (LOPDP):** Impedir la exposición de cédulas de identidad en las capas de analítica y garantizar trazabilidad completa para auditorías de la Superintendencia de Bancos.
 
