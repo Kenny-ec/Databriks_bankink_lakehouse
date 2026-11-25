@@ -79,7 +79,7 @@ Debido al sigilo bancario el pipeline utiliza un generador determinístico (`nb_
 ### 2. Linaje Automático en Unity Catalog
 ![Unity Catalog Lineage](docs/unity_catalog_lineage.png)
 
-### 3. Dashboard de Riesgo de Cartera y Alertas (AI/BI)
+### 3. Dashboard de Riesgo de Cartera
 ![Dashboard Gold](docs/Dashboard_gold.png)
 
 ---
