@@ -84,7 +84,7 @@ Debido al sigilo bancario el pipeline utiliza un generador determinístico (`nb_
 
 ---
 
-## Reproduce el Proyecto en tu Workspace de Databriks
+## Reproduce el Proyecto en tu Workspace de Databricks
 
 1. Importar los notebooks de la carpeta `notebooks/` en un workspace de **Databricks Free Edition**.
 2. Ejecutar la creación de schemas (`bronze`, `silver`, `gold`) y el Volume `landing_zone` dentro del catálogo `bank`.
