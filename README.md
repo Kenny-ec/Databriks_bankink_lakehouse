@@ -80,7 +80,7 @@ Debido al sigilo bancario y la LOPDP, el pipeline utiliza un generador determin√
 ![Unity Catalog Lineage](docs/unity_catalog_lineage.png)
 
 ### 3. Dashboard de Riesgo de Cartera y Alertas (AI/BI)
-![Dashboard Gold](docs/dashboard gold.png)
+![Dashboard Gold](docs/dashboard_gold.png)
 
 ---
 
