@@ -1,10 +1,10 @@
-# 🏦 Guayaquil Banking Lakehouse: Riesgo de Cartera, Calidad Transaccional y Cumplimiento LOPDP
+# Guayaquil Banking Lakehouse: Riesgo de Cartera
 
 Pipeline **End-to-End en Databricks (Arquitectura Medallion)** diseñado para resolver desafíos reales de ingeniería de datos en la banca ecuatoriana: consolidación de pagos multicanal, cálculo de cartera en riesgo (**PAR 30**) por zonas de Guayaquil, detección de transacciones atípicas y protección de datos personales conforme a la **LOPDP (Ecuador)**.
 
 ---
 
-## 🎯 Problema de Negocio
+## Problema de Negocio
 
 Ante el crecimiento acelerado del crédito de consumo y microcrédito en Guayaquil, las áreas de Riesgos, Cobranzas y Operaciones enfrentan tres retos críticos:
 1. **Integridad contable en ingesta multicanal:** Los pagos provenientes de App Móvil, Banca Web, Agencias, ATMs y Corresponsales de Barrio pueden llegar duplicados, con montos inválidos o con cambios tardíos de estado (`PENDIENTE` -> `CONFIRMADO`).
@@ -13,7 +13,7 @@ Ante el crecimiento acelerado del crédito de consumo y microcrédito en Guayaqu
 
 ---
 
-## 🏗️ Arquitectura y Flujo de Datos
+## Arquitectura y Flujo de Datos
 
 ```mermaid
 flowchart LR
@@ -65,13 +65,13 @@ flowchart LR
 
 ---
 
-## 📊 Estrategia de Datos
+## Estrategia de Datos
 
 Debido al sigilo bancario y la LOPDP, el pipeline utiliza un generador determinístico (`00_generador_datos_guayaquil.py`) calibrado con los segmentos oficiales del sistema financiero ecuatoriano (**Consumo, Microcrédito, Productivo y Vivienda**, en USD) y sectores reales de Guayaquil, inyectando deliberadamente duplicados, registros corruptos y anomalías operativas para validar la resiliencia del flujo.
 
 ---
 
-## 📸 Evidencia de Ejecución en Databricks
+## Verificación de Ejecución en Databricks
 
 ### 1. Orquestación End-to-End (Databricks Jobs DAG)
 ![Databricks Job DAG](docs/job_dag.png)
@@ -84,7 +84,7 @@ Debido al sigilo bancario y la LOPDP, el pipeline utiliza un generador determin�
 
 ---
 
-## 🚀 Cómo Reproducir este Proyecto
+## Reproduce el Proyecto en tu Workspace de Databriks
 
 1. Importar los notebooks de la carpeta `notebooks/` en un workspace de **Databricks Free Edition**.
 2. Ejecutar la creación de schemas (`bank_bronze`, `bank_silver`, `bank_gold`) y el Volume `landing_zone` dentro del catálogo `workspace`.
