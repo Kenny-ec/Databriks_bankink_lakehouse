@@ -1,15 +1,15 @@
 # Guayaquil Banking Lakehouse: Riesgo de Cartera
 
-Pipeline **End-to-End en Databricks (Arquitectura Medallion)** diseñado para resolver desafíos reales de ingeniería de datos en la banca ecuatoriana: consolidación de pagos multicanal, cálculo de cartera en riesgo (**PAR 30**) por zonas de Guayaquil, detección de transacciones atípicas y protección de datos personales conforme a la **LOPDP (Ecuador)**.
+Pipeline **End-to-End en Databricks (Arquitectura Medallion)** diseñado para resolver desafíos reales de ingeniería de datos en la banca ecuatoriana: consolidación de pagos multicanal, cálculo de cartera en riesgo (mora mayor a 30 días) por zonas de Guayaquil, detección de transacciones atípicas y protección de datos personales conforme a la **LOPDP**.
 
 ---
 
 ## Problema de Negocio
 
-Ante el crecimiento acelerado del crédito de consumo y microcrédito en Guayaquil, las áreas de Riesgos, Cobranzas y Operaciones enfrentan tres retos críticos:
+Ante el crecimiento acelerado del crédito de consumo y microcrédito en Guayaquil, las áreas de Riesgos Crediticio enfrentan tres retos:
 1. **Integridad contable en ingesta multicanal:** Los pagos provenientes de App Móvil, Banca Web, Agencias, ATMs y Corresponsales de Barrio pueden llegar duplicados, con montos inválidos o con cambios tardíos de estado (`PENDIENTE` -> `CONFIRMADO`).
-2. **Visibilidad oportuna del riesgo geográfico:** Necesidad de monitorear la tasa de morosidad mayor a 30 días (**PAR 30**) por sector de Guayaquil y alertar transacciones anómalas (por ejemplo, pagos inusuales de madrugada en corresponsales).
-3. **Cumplimiento regulatorio y privacidad (LOPDP):** Impedir la exposición de PII (cédulas de identidad en texto plano) en las capas de analítica y garantizar trazabilidad completa para auditorías de la Superintendencia de Bancos.
+2. **Visibilidad oportuna del riesgo geográfico:** Necesidad de monitorear la tasa de morosidad mayor a 30 días por sector de Guayaquil y alertar transacciones anómalas (por ejemplo, pagos inusuales de madrugada en corresponsales).
+3. **Cumplimiento regulatorio y privacidad (LOPDP):** Impedir la exposición de cédulas de identidad en las capas de analítica y garantizar trazabilidad completa para auditorías de la Superintendencia de Bancos.
 
 ---
 
@@ -23,14 +23,14 @@ flowchart LR
     end
 
     subgraph BRZ["2. Capa Bronze (Delta Lake)"]
-        B1["bank_bronze.creditos_raw<br/>+ Metadatos auditoría"]
-        B2["bank_bronze.pagos_raw<br/>Append inmutable"]
+        B1["bronze.creditos_raw<br/>+ Metadatos auditoría"]
+        B2["bronze.pagos_raw<br/>Append inmutable"]
     end
 
     subgraph SLV["3. Capa Silver (Calidad + LOPDP + ACID)"]
-        S1["bank_silver.creditos_limpios<br/>Hash SHA-256 + Enmascarado"]
-        S2["bank_silver.pagos_limpios<br/>Deduplicación + MERGE INTO"]
-        SQ["bank_silver.quarantine_pagos<br/>Registros inválidos aislados"]
+        S1["silver.creditos_limpios<br/>Hash SHA-256 + Enmascarado"]
+        S2["silver.pagos_limpios<br/>Deduplicación + MERGE INTO"]
+        SQ["silver.quarantine_pagos<br/>Registros inválidos aislados"]
     end
 
     subgraph GLD["4. Capa Gold (Liquid Clustering + BI)"]
@@ -53,13 +53,13 @@ flowchart LR
 
 ---
 
-## ⚙️ Decisiones Técnicas y Buenas Prácticas de Producción
+## Desarrollo Técnico de Ingenieria de Datos
 
 | Desafío Bancario | Solución Implementada en Databricks | Impacto |
 | :--- | :--- | :--- |
 | **Idempotencia en reprocesos** | `MERGE INTO` sobre `tx_id` en Delta Lake + deduplicación con `ROW_NUMBER()`. | Re-ejecutar un lote nocturno fallido genera **cero duplicados** y actualiza estados tardíos. |
-| **Tolerancia a datos corruptos** | Patrón de **Cuarentena** (`bank_silver.quarantine_pagos`) con columna `motivo_rechazo`. | Registros con montos negativos o cédulas nulas se aíslan para auditoría sin detener el cierre diario. |
-| **Privacidad (LOPDP Ecuador)** | Hashing `SHA-256` con *salt* para llaves de cruce + enmascaramiento (`******5678`) y eliminación de cédula plana en Silver. | Los analistas y dashboards consumen datos confiables sin exposición de PII. |
+| **Tolerancia a datos corruptos** | Patrón de **Cuarentena** (`silver.quarantine_pagos`) con columna `motivo_rechazo`. | Registros con montos negativos o cédulas nulas se aíslan para auditoría sin detener el cierre diario. |
+| **Privacidad (LOPDP Ecuador)** | Hashing `SHA-256` con *salt* para llaves de cruce + enmascaramiento (`******5678`) y eliminación de cédula completa en Silver. | Los analistas y dashboards consumen datos confiables sin exposición de identificaciones. |
 | **Rendimiento de consultas** | **Liquid Clustering** (`CLUSTER BY`) en tablas Gold + mantenimiento con `OPTIMIZE`. | Elimina el sobreparticionamiento y el problema de *small files* en consultas por zona y fecha. |
 | **Gobernanza y Auditoría** | **Unity Catalog** (modelo de 3 niveles + Volumes) y **Delta Time Travel**. | Linaje automático columna a columna y capacidad de auditar estados históricos exactos. |
 
@@ -67,7 +67,7 @@ flowchart LR
 
 ## Estrategia de Datos
 
-Debido al sigilo bancario y la LOPDP, el pipeline utiliza un generador determinístico (`00_generador_datos_guayaquil.py`) calibrado con los segmentos oficiales del sistema financiero ecuatoriano (**Consumo, Microcrédito, Productivo y Vivienda**, en USD) y sectores reales de Guayaquil, inyectando deliberadamente duplicados, registros corruptos y anomalías operativas para validar la resiliencia del flujo.
+Debido al sigilo bancario el pipeline utiliza un generador determinístico (`nb_generador_datos_guayaquil.py`) calibrado con los segmentos oficiales del sistema financiero ecuatoriano (**Consumo, Microcrédito, Productivo y Vivienda**, en USD) y sectores reales de Guayaquil, inyectando deliberadamente duplicados, registros corruptos y anomalías operativas para validar la resiliencia del flujo.
 
 ---
 
@@ -87,5 +87,5 @@ Debido al sigilo bancario y la LOPDP, el pipeline utiliza un generador determin�
 ## Reproduce el Proyecto en tu Workspace de Databriks
 
 1. Importar los notebooks de la carpeta `notebooks/` en un workspace de **Databricks Free Edition**.
-2. Ejecutar la creación de schemas (`bank_bronze`, `bank_silver`, `bank_gold`) y el Volume `landing_zone` dentro del catálogo `workspace`.
-3. Crear un **Databricks Job** encadenando los notebooks del `00` al `03` (con el parámetro `fecha_proceso = 2026-11-24` en la ingesta Bronze) y ejecutar el flujo.
+2. Ejecutar la creación de schemas (`bronze`, `silver`, `gold`) y el Volume `landing_zone` dentro del catálogo `bank`.
+3. Crear un **Databricks Job** encadenando los notebooks del `01` al `04` (con el parámetro `fecha_proceso = 2026-11-24` en la ingesta Bronze) y ejecutar el flujo.
