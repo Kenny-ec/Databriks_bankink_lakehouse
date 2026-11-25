@@ -74,7 +74,7 @@ Debido al sigilo bancario y la LOPDP, el pipeline utiliza un generador determin�
 ## 📸 Evidencia de Ejecución en Databricks
 
 ### 1. Orquestación End-to-End (Databricks Jobs DAG)
-![Databricks Job DAG](docs/01_job_dag_verde.png)
+![Databricks Job DAG](docs/job_dag.png)
 
 ### 2. Linaje Automático en Unity Catalog
 ![Unity Catalog Lineage](docs/02_unity_catalog_lineage.png)
