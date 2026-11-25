@@ -77,10 +77,10 @@ Debido al sigilo bancario y la LOPDP, el pipeline utiliza un generador determin√
 ![Databricks Job DAG](docs/job_dag.png)
 
 ### 2. Linaje Autom√°tico en Unity Catalog
-![Unity Catalog Lineage](docs/02_unity_catalog_lineage.png)
+![Unity Catalog Lineage](docs/unity_catalog_lineage.png)
 
 ### 3. Dashboard de Riesgo de Cartera y Alertas (AI/BI)
-![Dashboard Gold](docs/03_gold_dashboard.png)
+![Dashboard Gold](docs/gold_dashboard.png)
 
 ---
 
